@@ -1,0 +1,4 @@
+#!/bin/bash
+TMPNAME=`pwd`
+echo python $TMPNAME/stormbringer.py $TMPNAME/ >> /usr/bin/stormbringer
+chmod 755 /usr/bin/stormbringer
