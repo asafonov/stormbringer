@@ -170,7 +170,10 @@ class emailGui(Frame):
             selected_message = self.total_messages + 1 - num
             if selected_message>0:
                 self.selected_message = selected_message
-                threading.Thread(target=self.printInboxMessage).start()
+                if self.colors['threading'] == '1':
+                    threading.Thread(target=self.printInboxMessage).start()
+                else:
+                    self.printInboxMessage()
         if self.folder == 'archive':
             self.printMessage(self.message_list[self.total_messages - num])
 
@@ -178,7 +181,10 @@ class emailGui(Frame):
         selected_message = self.total_messages + 1 - num
         if selected_message>0:
             self.selected_message = selected_message
-            threading.Thread(target=self.deleteMessage).start()
+            if self.colors['threading'] == '1':
+                threading.Thread(target=self.deleteMessage).start()
+            else:
+                self.deleteMessage()
 
     #
     # -- checkEmails
@@ -189,7 +195,10 @@ class emailGui(Frame):
     def checkEmails(self):
         self.folder = 'inbox'
         self.message_list = []
-        threading.Thread(target=self.printMessageList).start()
+        if self.colors['threading'] == '1':
+            threading.Thread(target=self.printMessageList).start()
+        else:
+            self.printMessageList()
 
     #
     # -- checkArchive
@@ -199,7 +208,10 @@ class emailGui(Frame):
 
     def checkArchive(self):
         self.folder = 'archive'
-        threading.Thread(target=self.printArchiveMessageList).start()
+        if self.colors['threading'] == '1':
+            threading.Thread(target=self.printArchiveMessageList).start()
+        else:
+            self.printArchiveMessageList()
 
     def getCredentials(self):
         f = open(self.program_folder+'config/access')
@@ -352,7 +364,10 @@ class emailGui(Frame):
         self.printMessageList()
 
     def onDeleteButton(self):
-        threading.Thread(target=self.deleteMessage).start()
+        if self.colors['threading'] == '1':
+            threading.Thread(target=self.deleteMessage).start()
+        else:
+            self.deleteMessage()
 
     def getColors(self):
         self.colors = {}
