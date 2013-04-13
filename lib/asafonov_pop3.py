@@ -60,7 +60,7 @@ class pop3Connector:
             spam = ''
             for k in range(len(j[1])):
                 spam += str(j[1][k])+'\n'
-            message_list.append(asafonov_email_parser.parseEmailHeaders(spam))
+            message_list.append(lib.asafonov_email_parser.parseEmailHeaders(spam))
             message_list[i]['num'] = i+1
         M.quit()
         return message_list
