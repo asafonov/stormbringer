@@ -151,16 +151,19 @@ def parseEmailBody(email_body, program_folder=''):
 
 def parseEmailHeaders(email_body):
     out = {}
-    tmp = re.search('(?s)From: (.*?[A-Za-z0-9_\.\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}.*?)\'*(?:\n[A-Za-z\-]+:|\n\n)', email_body)
+    tmp = re.search('(?s)From: (.*?[A-Za-z0-9_\.\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}.*?)\'*(?:\n[A-Za-z\-]+:|\n{1,})', email_body)
     out['From'] = decodeHeader(tmp.group(1))
-    tmp = re.search('(?s)To: (.*?[A-Za-z0-9_\.\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}.*?)\'*(?:\n[A-Za-z\-]+:|\n\n)', email_body)
-    out['To'] = decodeHeader(tmp.group(1))
-    tmp = re.search('(?si)Cc: (.*?[A-Za-z0-9_\.\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}.*?)\'*(?:\n[A-Za-z\-]+:|\n\n)', email_body)
+    tmp = re.search('(?s)To: (.*?[A-Za-z0-9_\.\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}.*?)\'*(?:\n[A-Za-z\-]+:|\n{1,})', email_body)
+    if tmp!=None:
+        out['To'] = decodeHeader(tmp.group(1))
+    else:
+        out['To'] = ''
+    tmp = re.search('(?si)Cc: (.*?[A-Za-z0-9_\.\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}.*?)\'*(?:\n[A-Za-z\-]+:|\n{1,})', email_body)
     if tmp!=None:
         out['Cc'] = decodeHeader(tmp.group(1))
-    tmp = re.search('(?s)Subject: (.*?)\'*(?:\n[A-Za-z\-]+:|\n\n)', email_body)
+    tmp = re.search('(?s)Subject: (.*?)\'*(?:\n[A-Za-z\-]+:|\n{2,})', email_body)
     if tmp!=None:
-        out['Subject'] = decodeHeader(tmp.group(1))
+        out['Subject'] = decodeHeader(tmp.group(1))#.replace("'b'","")
     else:
         out['Subject'] = ''
     tmp = re.search('(?s)Date: (.*?)\'*\n', email_body)
