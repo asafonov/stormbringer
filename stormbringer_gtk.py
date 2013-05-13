@@ -1,4 +1,5 @@
 from gi.repository import Gtk
+from gi.repository.GdkPixbuf import Pixbuf
 import os, sys, re, threading, shutil
 import lib.asafonov_pop3, lib.asafonov_imap, lib.asafonov_smtp, lib.asafonov_folders
 
@@ -9,10 +10,21 @@ class emailGui(Gtk.Window):
         self.createWidgets()
         self.printArchiveMessageList()
 
-    def createWidgets(self):
-        self.grid = Gtk.Grid()
-        self.add(self.grid)
+    def createToolbar(self):
+        toolbar = Gtk.Toolbar()
+        self.grid.attach(toolbar, 0, 0, 3, 1)
 
+        compose_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
+        toolbar.insert(compose_button, 0)
+        reply_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_EDIT)
+        toolbar.insert(reply_button, 1)
+        delete_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_DELETE)
+        toolbar.insert(delete_button, 2)
+        #button_bold.connect("clicked", self.on_button_clicked, self.tag_bold)
+        #button_italic.connect("clicked", self.on_button_clicked, self.tag_italic)
+        #button_underline.connect("clicked", self.on_button_clicked, self.tag_underline)
+
+    def createList(self):
         self.liststore = Gtk.ListStore(str, str, str, str)
         treeview = Gtk.TreeView(model=self.liststore)
         renderer_text = Gtk.CellRendererText()
@@ -27,16 +39,25 @@ class emailGui(Gtk.Window):
         renderer_text = Gtk.CellRendererText()
         column_text = Gtk.TreeViewColumn("Date", renderer_text, text=3)
         treeview.append_column(column_text)
-        self.grid.attach(treeview,0,0,3,1)
+        self.grid.attach(treeview,0,1,3,1)
 
+    def createText(self):
         scrolledwindow = Gtk.ScrolledWindow()
         scrolledwindow.set_hexpand(True)
         scrolledwindow.set_vexpand(True)
-        self.grid.attach(scrolledwindow,0,1,3,1)
+        self.grid.attach(scrolledwindow,0,2,3,1)
         self.textview = Gtk.TextView()
         self.textbuffer = self.textview.get_buffer()
         self.textbuffer.set_text("")
         scrolledwindow.add(self.textview)
+
+
+    def createWidgets(self):
+        self.grid = Gtk.Grid()
+        self.add(self.grid)
+        self.createToolbar()
+        self.createList()
+        self.createText()
 
     def printList(self):
         self.liststore.clear()
