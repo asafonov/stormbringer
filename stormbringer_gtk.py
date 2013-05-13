@@ -1,14 +1,17 @@
 from gi.repository import Gtk
-from gi.repository.GdkPixbuf import Pixbuf
-import os, sys, re, threading, shutil
-import lib.asafonov_pop3, lib.asafonov_imap, lib.asafonov_smtp, lib.asafonov_folders
+import sys
+import lib.asafonov_mailer, lib.asafonov_folders
 
 class emailGui(Gtk.Window):
     def __init__(self, program_folder=''):
         Gtk.Window.__init__(self, title="Stormbringer")
         self.program_folder = program_folder
         self.createWidgets()
-        self.printArchiveMessageList()
+        self.mailer=lib.asafonov_mailer.mailer(program_folder)
+        try:
+            self.printMessageList()
+        except Exception:
+            self.printArchiveMessageList()
 
     def createToolbar(self):
         toolbar = Gtk.Toolbar()
@@ -23,6 +26,10 @@ class emailGui(Gtk.Window):
         #button_bold.connect("clicked", self.on_button_clicked, self.tag_bold)
         #button_italic.connect("clicked", self.on_button_clicked, self.tag_italic)
         #button_underline.connect("clicked", self.on_button_clicked, self.tag_underline)
+
+    def printMessageList(self):
+        self.message_list = self.mailer.getMessageList()
+        self.printList()
 
     def createList(self):
         self.liststore = Gtk.ListStore(str, str, str, str)
@@ -62,8 +69,9 @@ class emailGui(Gtk.Window):
 
     def printList(self):
         self.liststore.clear()
-        for i in range(len(self.message_list)):
-            tmp = [str(i+1), self.message_list[i]['Subject'], self.message_list[i]['From'], self.message_list[i]['Date']]
+        cnt = len(self.message_list)
+        for i in range(cnt):
+            tmp = [str(i+1), self.message_list[cnt-i-1]['Subject'], self.message_list[cnt-i-1]['From'], self.message_list[cnt-i-1]['Date']]
             self.liststore.append(tmp)
 
     #
