@@ -1,5 +1,5 @@
 from gi.repository import Gtk
-import sys
+import sys, re
 import lib.asafonov_mailer, lib.asafonov_folders
 
 class emailGui(Gtk.Window):
@@ -14,7 +14,6 @@ class emailGui(Gtk.Window):
         except Exception:
             self.printArchiveMessageList()
             self.folder='archive'
-        self.printMessage()
 
     def createToolbar(self):
         toolbar = Gtk.Toolbar()
@@ -50,7 +49,16 @@ class emailGui(Gtk.Window):
         renderer_text = Gtk.CellRendererText()
         column_text = Gtk.TreeViewColumn("Date", renderer_text, text=3)
         treeview.append_column(column_text)
+        treeview.connect("cursor-changed", self.onTreeviewChanged)
         self.grid.attach(treeview,0,1,3,1)
+
+    def onTreeviewChanged(self, widget):
+        if widget.get_selection()!=None:
+            selected_message = len(self.message_list)-int(widget.get_selection().get_selected()[0].get_value(widget.get_selection().get_selected()[1], 0))+1
+            if (selected_message>0):
+                self.selected_message = selected_message
+                self.printMessage()
+
 
     def createText(self):
         scrolledwindow = Gtk.ScrolledWindow()
@@ -86,7 +94,6 @@ class emailGui(Gtk.Window):
         self.printList()
 
     def printMessage(self):
-        self.selected_message = 1;
         if (self.folder=='inbox'):
             self.message = self.mailer.getMessage(self.selected_message)
         elif(self.folder=='archive'):
