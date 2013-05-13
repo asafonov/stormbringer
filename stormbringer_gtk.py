@@ -10,8 +10,11 @@ class emailGui(Gtk.Window):
         self.mailer=lib.asafonov_mailer.mailer(program_folder)
         try:
             self.printMessageList()
+            self.folder='inbox'
         except Exception:
             self.printArchiveMessageList()
+            self.folder='archive'
+        self.printMessage()
 
     def createToolbar(self):
         toolbar = Gtk.Toolbar()
@@ -82,6 +85,22 @@ class emailGui(Gtk.Window):
         self.message_list = lib.asafonov_folders.getArchiveFolderItems(self.program_folder)
         self.printList()
 
+    def printMessage(self):
+        self.selected_message = 1;
+        if (self.folder=='inbox'):
+            self.message = self.mailer.getMessage(self.selected_message)
+        elif(self.folder=='archive'):
+            self.message = self.message_list[self.selected_message]
+        self.printBody()
+
+    def printBody(self):
+        if 'plain' in self.message:
+            body = self.message['plain']
+        elif 'html' in self.message:
+            body = re.sub('<[^>]*>', '', re.sub('<br[^>]*>', '\n', self.message['html']))
+        else:
+            body = ''
+        self.textbuffer.set_text(body)
 
 if len(sys.argv)>1:
     program_folder = sys.argv[1]

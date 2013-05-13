@@ -20,3 +20,6 @@ class mailer:
 
     def getMessageList(self):
         return self.transport.getMessageList()
+
+    def getMessage(self, num):
+        return self.transport.getMessage(num)
