@@ -97,7 +97,7 @@ class emailGui(Gtk.Window):
         if (self.folder=='inbox'):
             self.message = self.mailer.getMessage(self.selected_message)
         elif(self.folder=='archive'):
-            self.message = self.message_list[self.selected_message]
+            self.message = self.message_list[self.selected_message-1]
         self.printBody()
 
     def printBody(self):
