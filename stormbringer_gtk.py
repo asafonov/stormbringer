@@ -25,9 +25,14 @@ class emailGui(Gtk.Window):
         toolbar.insert(reply_button, 1)
         delete_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_REMOVE)
         toolbar.insert(delete_button, 2)
-        #button_bold.connect("clicked", self.on_button_clicked, self.tag_bold)
+        compose_button.connect("clicked", self.compose)
         #button_italic.connect("clicked", self.on_button_clicked, self.tag_italic)
         #button_underline.connect("clicked", self.on_button_clicked, self.tag_underline)
+
+    def compose(self, widget):
+        win = composeForm(program_folder=self.program_folder)
+        win.show_all()
+        
 
     def printMessageList(self):
         self.message_list = self.mailer.getMessageList()
@@ -108,6 +113,51 @@ class emailGui(Gtk.Window):
         else:
             body = ''
         self.textbuffer.set_text(body)
+
+class composeForm(Gtk.Window):
+
+    def __init__(self, v_to='', v_subject='', v_msg='', v_cc='', program_folder=''):
+        Gtk.Window.__init__(self, title="Stormbringer. Compose message")
+        self.program_folder = program_folder
+        self.createWidgets(v_to, v_subject, v_msg, v_cc)
+
+    def createWidgets(self, v_to, v_subject, v_msg, v_cc):
+        f = open(self.program_folder+'config/signature')
+        v_msg = '\n\n'+f.read()+v_msg
+        f.close()
+        self.grid = Gtk.Grid()
+        self.add(self.grid)
+
+        to_label = Gtk.Label('To');
+        self.grid.attach(to_label, 0, 0, 1, 1)
+        to_input = Gtk.Entry();
+        to_input.set_text(v_to)
+        self.grid.attach(to_input, 1, 0, 1, 1)
+
+        subject_label = Gtk.Label('Subject');
+        self.grid.attach(subject_label, 0, 1, 1, 1)
+        subject_input = Gtk.Entry();
+        subject_input.set_text(v_subject)
+        self.grid.attach(subject_input, 1, 1, 1, 1)
+
+        cc_label = Gtk.Label('Cc');
+        self.grid.attach(cc_label, 0, 2, 1, 1)
+        cc_input = Gtk.Entry();
+        cc_input.set_text(v_cc)
+        self.grid.attach(cc_input, 1, 2, 1, 1)
+
+        body_label = Gtk.Label('Message');
+        self.grid.attach(body_label, 0, 3, 1, 1)
+        scrolledwindow = Gtk.ScrolledWindow()
+        scrolledwindow.set_hexpand(True)
+        scrolledwindow.set_vexpand(True)
+        self.grid.attach(scrolledwindow,1,3,1,1)
+        self.textview = Gtk.TextView()
+        self.textbuffer = self.textview.get_buffer()
+        self.textbuffer.set_text(v_msg)
+        scrolledwindow.add(self.textview)
+
+
 
 if len(sys.argv)>1:
     program_folder = sys.argv[1]
