@@ -167,7 +167,14 @@ def parseEmailHeaders(email_body):
     else:
         out['Subject'] = ''
     tmp = re.search('(?s)Date: (.*?)\'*\n', email_body)
-    out['Date'] = decodeHeader(tmp.group(1))
+    if tmp!=None:
+        out['Date'] = decodeHeader(tmp.group(1))
+    else:
+        tmp = re.search('(?s)Delivery-date: (.*?)\'*\n', email_body)
+        if tmp!=None:
+            out['Date'] = decodeHeader(tmp.group(1))
+        else:
+            out['Date'] = '';
     tmp = re.findall('(?s)boundary="{0,1}([A-Za-z0-9=_\.\-]*)', email_body)
     if len(tmp)>0:
         out['boundary'] = decodeHeader(tmp[len(tmp)-1])
