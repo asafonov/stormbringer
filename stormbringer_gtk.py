@@ -3,6 +3,9 @@ import sys, re
 import lib.asafonov_mailer, lib.asafonov_folders
 
 class emailGui(Gtk.Window):
+
+    message={}
+
     def __init__(self, program_folder=''):
         Gtk.Window.__init__(self, title="Stormbringer")
         self.program_folder = program_folder
@@ -26,13 +29,23 @@ class emailGui(Gtk.Window):
         delete_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_REMOVE)
         toolbar.insert(delete_button, 2)
         compose_button.connect("clicked", self.compose)
-        #button_italic.connect("clicked", self.on_button_clicked, self.tag_italic)
+        reply_button.connect("clicked", self.reply)
         #button_underline.connect("clicked", self.on_button_clicked, self.tag_underline)
 
     def compose(self, widget):
         win = composeForm(program_folder=self.program_folder)
         win.show_all()
         
+    def reply(self, widget):
+        if 'From' in self.message:
+            if 'Cc' in self.message:
+                cc=self.message['Cc']
+            else:
+                cc=''
+            win = composeForm(program_folder=self.program_folder, v_to=self.message['From'], v_subject=self.message['Subject'], v_msg=self.message['plain'], v_cc=cc)
+            win.show_all()
+        else:
+            self.compose(widget)
 
     def printMessageList(self):
         self.message_list = self.mailer.getMessageList()
