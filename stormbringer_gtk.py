@@ -12,11 +12,10 @@ class emailGui(Gtk.Window):
         self.createWidgets()
         self.mailer=lib.asafonov_mailer.mailer(program_folder)
         try:
-            self.printMessageList()
             self.folder='inbox'
         except Exception:
-            self.printArchiveMessageList()
             self.folder='archive'
+        self.printMessageList()
 
     def createToolbar(self):
         toolbar = Gtk.Toolbar()
@@ -30,7 +29,7 @@ class emailGui(Gtk.Window):
         toolbar.insert(delete_button, 2)
         compose_button.connect("clicked", self.compose)
         reply_button.connect("clicked", self.reply)
-        #button_underline.connect("clicked", self.on_button_clicked, self.tag_underline)
+        delete_button.connect("clicked", self.deleteMessage)
 
     def compose(self, widget):
         win = composeForm(program_folder=self.program_folder)
@@ -50,6 +49,12 @@ class emailGui(Gtk.Window):
             self.compose(widget)
 
     def printMessageList(self):
+        if (self.folder=='inbox'):
+            self.printInboxMessageList()
+        elif(self.folder=='archive'):
+            self.printArchiveMessageList()
+
+    def printInboxMessageList(self):
         self.message_list = self.mailer.getMessageList()
         self.printList()
 
@@ -132,6 +137,11 @@ class emailGui(Gtk.Window):
         else:
             body = ''
         self.textbuffer.set_text(body)
+
+    def deleteMessage(self, widget):
+        self.mailer.deleteMessage(self.selected_message)
+        self.textbuffer.set_text('')
+        self.printMessageList()
 
 class composeForm(Gtk.Window):
 

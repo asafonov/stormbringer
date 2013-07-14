@@ -33,3 +33,6 @@ class mailer:
         
     def sendMessage(self, v_to, v_subject, v_msg, filenames, attach_dir, v_cc):
         self.sender.sendMessage(v_to, v_subject, v_msg, filenames, attach_dir, v_cc)
+
+    def deleteMessage(self, num):
+        self.transport.deleteMessage(num)
