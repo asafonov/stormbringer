@@ -35,6 +35,7 @@ class emailGui(Gtk.Window):
     def compose(self, widget):
         win = composeForm(program_folder=self.program_folder)
         win.show_all()
+        win.maximize()
         
     def reply(self, widget):
         if 'From' in self.message:
@@ -44,6 +45,7 @@ class emailGui(Gtk.Window):
                 cc=''
             win = composeForm(program_folder=self.program_folder, v_to=self.message['From'], v_subject=self.message['Subject'], v_msg=self.message['plain'], v_cc=cc)
             win.show_all()
+            win.maximize()
         else:
             self.compose(widget)
 
@@ -140,7 +142,10 @@ class composeForm(Gtk.Window):
 
     def createWidgets(self, v_to, v_subject, v_msg, v_cc):
         f = open(self.program_folder+'config/signature')
-        v_msg = '\n\n'+f.read()+v_msg
+        if v_msg=='':
+            v_msg = '\n\n'+f.read()
+        else:
+            v_msg = '\n\n'+f.read()+"\n\n"+v_msg
         f.close()
         self.grid = Gtk.Grid()
         self.add(self.grid)
