@@ -68,7 +68,11 @@ class emailGui(Gtk.Window):
         column_text = Gtk.TreeViewColumn("Date", renderer_text, text=3)
         treeview.append_column(column_text)
         treeview.connect("cursor-changed", self.onTreeviewChanged)
-        self.grid.attach(treeview,0,1,3,1)
+        scrolledwindow = Gtk.ScrolledWindow()
+        scrolledwindow.set_hexpand(True)
+        scrolledwindow.set_vexpand(True)
+        scrolledwindow.add(treeview)
+        self.grid.attach(scrolledwindow,0,1,3,1)
 
     def onTreeviewChanged(self, widget):
         if widget.get_selection()!=None:
@@ -180,4 +184,5 @@ else:
 win = emailGui(program_folder=program_folder)
 win.connect("delete-event", Gtk.main_quit)
 win.show_all()
+win.maximize()
 Gtk.main()
