@@ -27,9 +27,12 @@ class emailGui(Gtk.Window):
         toolbar.insert(reply_button, 1)
         delete_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_REMOVE)
         toolbar.insert(delete_button, 2)
+        refresh_button = Gtk.ToolButton.new_from_stock(Gtk.STOCK_REFRESH)
+        toolbar.insert(refresh_button, 3)
         compose_button.connect("clicked", self.compose)
         reply_button.connect("clicked", self.reply)
         delete_button.connect("clicked", self.deleteMessage)
+        refresh_button.connect("clicked", self.printMessageList)
 
     def compose(self, widget):
         win = composeForm(program_folder=self.program_folder)
@@ -48,7 +51,7 @@ class emailGui(Gtk.Window):
         else:
             self.compose(widget)
 
-    def printMessageList(self):
+    def printMessageList(self, widget=None):
         if (self.folder=='inbox'):
             self.printInboxMessageList()
         elif(self.folder=='archive'):
