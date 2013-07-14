@@ -1,4 +1,4 @@
-import lib.asafonov_pop3, lib.asafonov_imap
+import lib.asafonov_pop3, lib.asafonov_imap, lib.asafonov_smtp
 
 class mailer:
 
@@ -17,9 +17,19 @@ class mailer:
         self.transport.login = lines[2]
         self.transport.password = lines[3]
         self.transport.is_ssl = int(lines[4])
+        self.sender = lib.asafonov_smtp.smtpConnector(self.program_folder)
+        self.sender.host = lines[5]
+        self.sender.port = lines[6]
+        self.sender.login = lines[2]
+        self.sender.password = lines[3]
+        self.sender.is_ssl = int(lines[4])
+        self.sender.from_email=lines[7]
 
     def getMessageList(self):
         return self.transport.getMessageList()
 
     def getMessage(self, num):
         return self.transport.getMessage(num)
+        
+    def sendMessage(self, v_to, v_subject, v_msg, filenames, attach_dir, v_cc):
+        self.sender.sendMessage(v_to, v_subject, v_msg, filenames, attach_dir, v_cc)

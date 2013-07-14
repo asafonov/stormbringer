@@ -138,6 +138,7 @@ class composeForm(Gtk.Window):
     def __init__(self, v_to='', v_subject='', v_msg='', v_cc='', program_folder=''):
         Gtk.Window.__init__(self, title="Stormbringer. Compose message")
         self.program_folder = program_folder
+        self.mailer=lib.asafonov_mailer.mailer(program_folder)
         self.createWidgets(v_to, v_subject, v_msg, v_cc)
 
     def createWidgets(self, v_to, v_subject, v_msg, v_cc):
@@ -152,21 +153,21 @@ class composeForm(Gtk.Window):
 
         to_label = Gtk.Label('To');
         self.grid.attach(to_label, 0, 0, 1, 1)
-        to_input = Gtk.Entry();
-        to_input.set_text(v_to)
-        self.grid.attach(to_input, 1, 0, 1, 1)
+        self.to_input = Gtk.Entry();
+        self.to_input.set_text(v_to)
+        self.grid.attach(self.to_input, 1, 0, 1, 1)
 
         subject_label = Gtk.Label('Subject');
         self.grid.attach(subject_label, 0, 1, 1, 1)
-        subject_input = Gtk.Entry();
-        subject_input.set_text(v_subject)
-        self.grid.attach(subject_input, 1, 1, 1, 1)
+        self.subject_input = Gtk.Entry();
+        self.subject_input.set_text(v_subject)
+        self.grid.attach(self.subject_input, 1, 1, 1, 1)
 
         cc_label = Gtk.Label('Cc');
         self.grid.attach(cc_label, 0, 2, 1, 1)
-        cc_input = Gtk.Entry();
-        cc_input.set_text(v_cc)
-        self.grid.attach(cc_input, 1, 2, 1, 1)
+        self.cc_input = Gtk.Entry();
+        self.cc_input.set_text(v_cc)
+        self.grid.attach(self.cc_input, 1, 2, 1, 1)
 
         body_label = Gtk.Label('Message');
         self.grid.attach(body_label, 0, 3, 1, 1)
@@ -179,7 +180,19 @@ class composeForm(Gtk.Window):
         self.textbuffer.set_text(v_msg)
         scrolledwindow.add(self.textview)
 
+        button = Gtk.Button('Send')
+        self.grid.attach(button, 1, 4, 1, 1)
+        button.connect("clicked", self.sendMessage)
 
+    def sendMessage(self, widget):
+        filenames = []
+        attach_dir = ''
+        v_to = self.to_input.get_text()
+        v_subject = self.subject_input.get_text()
+        start, end = self.textbuffer.get_bounds()
+        v_msg = self.textbuffer.get_text(start, end, True)
+        v_cc = self.cc_input.get_text()
+        self.mailer.sendMessage(v_to, v_subject, v_msg.replace('\n', '<br />'), filenames, attach_dir, v_cc)
 
 if len(sys.argv)>1:
     program_folder = sys.argv[1]
