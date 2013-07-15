@@ -77,19 +77,17 @@ class emailGui(Gtk.Window):
         renderer_text = Gtk.CellRendererText()
         column_text = Gtk.TreeViewColumn("Date", renderer_text, text=3)
         treeview.append_column(column_text)
-        treeview.connect("cursor-changed", self.onTreeviewChanged)
+        treeview.set_activate_on_single_click(True)
+        treeview.connect("row-activated", self.onTreeviewRowActivated)
         scrolledwindow = Gtk.ScrolledWindow()
         scrolledwindow.set_hexpand(True)
         scrolledwindow.set_vexpand(True)
         scrolledwindow.add(treeview)
         self.grid.attach(scrolledwindow,0,1,3,1)
 
-    def onTreeviewChanged(self, widget):
-        if widget.get_selection()!=None:
-            selected_message = len(self.message_list)-int(widget.get_selection().get_selected()[0].get_value(widget.get_selection().get_selected()[1], 0))+1
-            if (selected_message>0):
-                self.selected_message = selected_message
-                self.printMessage()
+    def onTreeviewRowActivated(self, widget, row, col):
+        self.selected_message = len(self.message_list)-int(row.to_string())
+        self.printMessage()
 
 
     def createText(self):
