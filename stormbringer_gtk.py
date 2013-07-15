@@ -7,6 +7,8 @@ class emailGui(Gtk.Window):
     message={}
 
     def __init__(self, program_folder=''):
+        lib.asafonov_folders.initFolders(program_folder)
+        lib.asafonov_folders.clearCache(program_folder)
         Gtk.Window.__init__(self, title="Stormbringer")
         self.program_folder = program_folder
         self.createWidgets()

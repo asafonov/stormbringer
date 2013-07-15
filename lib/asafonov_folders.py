@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import lib.asafonov_email_parser
 import lib.asafonov_user_login
-import os
+import os, shutil
 
 def readFolder(folder):
     if os.path.exists(folder):
@@ -17,6 +17,17 @@ def getUserSentFolder(program_folder=''):
 def getUserArchiveFolder(program_folder=''):
     user_info = lib.asafonov_user_login.getUserInfo(program_folder)
     return program_folder+'archive/'+user_info['from_email']
+
+def clearCache(program_folder=''):
+    if os.path.exists(program_folder+'cache'):
+        shutil.rmtree(program_folder+'cache')
+    os.makedirs(program_folder+'cache')
+
+def initFolders(program_folder=''):
+    if not os.path.exists(program_folder+'sent'):
+        os.makedirs(program_folder+'sent')
+    if not os.path.exists(program_folder+'cache'):
+        os.makedirs(program_folder+'cache')
 
 def saveArchiveMessage(message_id, program_folder=''):
     user_info = lib.asafonov_user_login.getUserInfo(program_folder)
