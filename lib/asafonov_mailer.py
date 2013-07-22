@@ -7,7 +7,7 @@ class mailer:
         f = open(self.program_folder+'config/access')
         lines = f.read().split('\n')
         f.close()
-        self.protocol = lines[8]
+        self.protocol = lines[9]
         if self.protocol == 'IMAP':
             self.transport = lib.asafonov_imap.imapConnector(self.program_folder)
         else:
@@ -22,8 +22,8 @@ class mailer:
         self.sender.port = lines[6]
         self.sender.login = lines[2]
         self.sender.password = lines[3]
-        self.sender.is_ssl = int(lines[4])
-        self.sender.from_email=lines[7]
+        self.sender.is_ssl = int(lines[7])
+        self.sender.from_email=lines[8]
 
     def getMessageList(self):
         return self.transport.getMessageList()
