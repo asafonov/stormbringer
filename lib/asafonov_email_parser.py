@@ -152,7 +152,10 @@ def parseEmailBody(email_body, program_folder=''):
 def parseEmailHeaders(email_body):
     out = {}
     tmp = re.search('(?s)From: (.*?[A-Za-z0-9_\.\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}.*?)\'*(?:\n[A-Za-z\-]+:|\n{1,})', email_body)
-    out['From'] = decodeHeader(tmp.group(1))
+    if tmp!=None:
+        out['From'] = decodeHeader(tmp.group(1))
+    else:
+        out['From'] = ''
     tmp = re.search('(?s)To: (.*?[A-Za-z0-9_\.\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}.*?)\'*(?:\n[A-Za-z\-]+:|\n{1,})', email_body)
     if tmp!=None:
         out['To'] = decodeHeader(tmp.group(1))
