@@ -65,27 +65,27 @@ class emailGui(Gtk.Window):
 
     def createList(self):
         self.liststore = Gtk.ListStore(str, str, str, str)
-        treeview = Gtk.TreeView(model=self.liststore)
+        self.treeview = Gtk.TreeView(model=self.liststore)
         renderer_text = Gtk.CellRendererText()
         column_text = Gtk.TreeViewColumn("Num", renderer_text, text=0)
-        treeview.append_column(column_text)
+        self.treeview.append_column(column_text)
         renderer_text = Gtk.CellRendererText()
         column_text = Gtk.TreeViewColumn("Subject", renderer_text, text=1)
         column_text.set_expand(True)
-        treeview.append_column(column_text)
+        self.treeview.append_column(column_text)
         renderer_text = Gtk.CellRendererText()
         column_text = Gtk.TreeViewColumn("From", renderer_text, text=2)
-        treeview.append_column(column_text)
+        self.treeview.append_column(column_text)
         renderer_text = Gtk.CellRendererText()
         column_text = Gtk.TreeViewColumn("Date", renderer_text, text=3)
-        treeview.append_column(column_text)
-        treeview.set_activate_on_single_click(True)
-        treeview.connect("row-activated", self.onTreeviewRowActivated)
-        treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+        self.treeview.append_column(column_text)
+        self.treeview.set_activate_on_single_click(True)
+        self.treeview.connect("row-activated", self.onTreeviewRowActivated)
+        self.treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
         scrolledwindow = Gtk.ScrolledWindow()
         scrolledwindow.set_hexpand(True)
         scrolledwindow.set_vexpand(True)
-        scrolledwindow.add(treeview)
+        scrolledwindow.add(self.treeview)
         self.grid.attach(scrolledwindow,0,1,3,1)
 
     def onTreeviewRowActivated(self, widget, row, col):
@@ -143,7 +143,13 @@ class emailGui(Gtk.Window):
         self.textbuffer.set_text(body)
 
     def deleteMessage(self, widget):
-        self.mailer.deleteMessage(self.selected_message)
+        tree_path = self.treeview.get_selection().get_selected_rows()[1]
+        msg_list_len = len(self.message_list)
+        if len(tree_path)>1:
+            for i in range(len(tree_path)):
+                self.mailer.deleteMessage(msg_list_len-int(str(tree_path[i])))
+        else:
+            self.mailer.deleteMessage(self.selected_message)
         self.textbuffer.set_text('')
         self.printMessageList()
 
