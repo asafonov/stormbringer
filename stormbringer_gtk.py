@@ -81,6 +81,7 @@ class emailGui(Gtk.Window):
         treeview.append_column(column_text)
         treeview.set_activate_on_single_click(True)
         treeview.connect("row-activated", self.onTreeviewRowActivated)
+        treeview.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
         scrolledwindow = Gtk.ScrolledWindow()
         scrolledwindow.set_hexpand(True)
         scrolledwindow.set_vexpand(True)
