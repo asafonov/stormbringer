@@ -1,4 +1,4 @@
-import lib.asafonov_pop3, lib.asafonov_imap, lib.asafonov_smtp
+import lib.asafonov_pop3, lib.asafonov_imap, lib.asafonov_smtp, json, re
 
 class mailer:
 
@@ -24,9 +24,38 @@ class mailer:
         self.sender.password = lines[3]
         self.sender.is_ssl = int(lines[7])
         self.sender.from_email=lines[8]
+        self.initFilters()
+
+    def initFilters(self):
+        f = open(self.program_folder+'config/filters')
+        self.filters = json.loads(f.read())
+        f.close()
 
     def getMessageList(self):
-        return self.transport.getMessageList()
+        self.mail_list = self.transport.getMessageList()
+        if len(self.filters)>0:
+            self.applyFilters()
+        return self.mail_list
+
+    def applyFilters(self):
+        spam = list(self.mail_list)
+        for mail_item in spam:
+            for i in range(len(self.filters)):
+                applied = True
+                for (f, filter_item) in self.filters[i].items():
+                    if f!='Action':
+                        if not re.match(filter_item, mail_item[f]):
+                            applied = False
+                if applied:
+                    self.filterAction(mail_item, self.filters[i]['Action'])
+
+    def filterAction(self, item, action):
+        if (action=='hide'):
+            self.mail_list.remove(item)
+        if (action=='delete'):
+            index = self.mail_list.index(item)
+            self.mail_list.remove(item)
+            self.deleteMessage(index+1)
 
     def getMessage(self, num):
         return self.transport.getMessage(num)

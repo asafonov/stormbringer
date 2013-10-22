@@ -1,0 +1,4 @@
+[
+{"From":".*spam_email_domain.*", "Subject":".*this_is_spam.*", "Action":"delete"},
+{"Subject":".*some_subject.*", "To":".*not_my_email_address.*", "Action":"hide"}
+]
