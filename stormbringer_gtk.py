@@ -206,6 +206,7 @@ class composeForm(Gtk.Window):
         v_msg = self.textbuffer.get_text(start, end, True)
         v_cc = self.cc_input.get_text()
         self.mailer.sendMessage(v_to, v_subject, v_msg.replace('\n', '<br />'), filenames, attach_dir, v_cc)
+        self.destroy()
 
 if len(sys.argv)>1:
     program_folder = sys.argv[1]
