@@ -18,7 +18,7 @@ class emailGui:
             self.printMessageList()
 
             if x>0:
-                self.myscreen.addstr(16, 1, "Pressed: "+str(x))
+                self.myscreen.addstr(20, 1, "Pressed: "+str(x))
 
             self.myscreen.refresh()
             x = self.myscreen.getch()
@@ -27,6 +27,7 @@ class emailGui:
 
     def createScreen(self):
         self.myscreen = curses.initscr()
+        self.myscreen.clear()
         self.myscreen.border(0)
         self.myscreen.addstr(0, 1, "Stormbringer")
 
