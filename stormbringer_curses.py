@@ -53,7 +53,7 @@ class emailGui:
         cnt = len(self.message_list)
         for i in range(cnt):
             tmp = str(i+1)+' '+self.message_list[cnt-i-1]['Subject']+' '+self.message_list[cnt-i-1]['From']
-            self.myscreen.addstr(i+2, 2, tmp)
+            self.myscreen.addnstr(i+2, 2, tmp, self.myscreen.getmaxyx()[1]-4)
 
 
 if len(sys.argv)>1:
