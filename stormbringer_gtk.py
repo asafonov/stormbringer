@@ -1,5 +1,5 @@
 from gi.repository import Gtk
-import sys, re
+import sys, re, shutil, os
 import lib.asafonov_mailer, lib.asafonov_folders
 
 class emailGui(Gtk.Window):
@@ -162,6 +162,7 @@ class composeForm(Gtk.Window):
         self.createWidgets(v_to, v_subject, v_msg, v_cc)
 
     def createWidgets(self, v_to, v_subject, v_msg, v_cc):
+        self.attachments = []
         f = open(self.program_folder+'config/signature')
         if v_msg=='':
             v_msg = '\n\n'+f.read()
@@ -189,24 +190,48 @@ class composeForm(Gtk.Window):
         self.cc_input.set_text(v_cc)
         self.grid.attach(self.cc_input, 1, 2, 1, 1)
 
+        self.attach_list = Gtk.Label('No files attached')
+        self.grid.attach(self.attach_list, 1, 3, 1, 1)
+
+        attach_label = Gtk.Label('Attachment')
+        self.grid.attach(attach_label, 0, 4, 1, 1)
+        attach_button = Gtk.Button('Add')
+        self.grid.attach(attach_button, 1, 4, 1, 1)
+        attach_button.connect("clicked", self.onAttachFile)
+
         body_label = Gtk.Label('Message');
-        self.grid.attach(body_label, 0, 3, 1, 1)
+        self.grid.attach(body_label, 0, 5, 1, 1)
         scrolledwindow = Gtk.ScrolledWindow()
         scrolledwindow.set_hexpand(True)
         scrolledwindow.set_vexpand(True)
-        self.grid.attach(scrolledwindow,1,3,1,1)
+        self.grid.attach(scrolledwindow,1,5,1,1)
         self.textview = Gtk.TextView()
         self.textbuffer = self.textview.get_buffer()
         self.textbuffer.set_text(v_msg)
         scrolledwindow.add(self.textview)
 
         button = Gtk.Button('Send')
-        self.grid.attach(button, 1, 4, 1, 1)
+        self.grid.attach(button, 1, 6, 1, 1)
         button.connect("clicked", self.sendMessage)
+
+    def onAttachFile(self, widget):
+        dialog = Gtk.FileChooserDialog("Please choose a file", self, Gtk.FileChooserAction.OPEN, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        dialog.set_select_multiple(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            self.attachments.extend(dialog.get_filenames())
+        self.attach_list.set_text(', '.join(self.attachments))
+        dialog.destroy()
 
     def sendMessage(self, widget):
         filenames = []
         attach_dir = ''
+        if len(self.attachments)>0:
+            attach_dir = self.program_folder+'tmp/attach'
+            os.makedirs(attach_dir)
+            for i in range(len(self.attachments)):
+                shutil.copy(self.attachments[i], attach_dir)
+            filenames = os.listdir(attach_dir)
         v_to = self.to_input.get_text()
         v_subject = self.subject_input.get_text()
         start, end = self.textbuffer.get_bounds()
