@@ -8,7 +8,7 @@ class stormbringer():
         lib.asafonov_folders.clearCache(program_folder)
         self.program_folder = program_folder
         self.mailer=lib.asafonov_mailer.mailer(program_folder)
-        print('Welcome to Stormbringer, the world best email client!')
+        print('Welcome to Stormbringer, the true hacker\'s email client')
         cmd = ''
         f = open(self.program_folder+'config/commands')
         self.commands = json.loads(f.read())
@@ -34,27 +34,114 @@ class stormbringer():
             if len(spam)==1:
                 spam.append(1)
             self.printMessage(spam[1])
+        elif cmd_name=='new':
+            self.createMessage()
+        elif cmd_name=='rp':
+            if len(spam)==1:
+                spam.append(self.message_list_count - self.selected_message + 1)
+            self.replyMessage(spam[1])
+        elif cmd_name=='rm':
+            if len(spam)==1:
+                spam.append(self.message_list_count - self.selected_message + 1)
+            self.deleteMessage(spam[1])
         elif cmd_name=='exit':
             return False
         else:
             self.error("Unknown command: "+spam[0])
         return True
 
+    def replyMessage(self, num):
+        selected_message = self.message_list_count - num + 1
+        if selected_message!=self.selected_message:
+            self.selected_message = selected_message
+            self.getMessage()
+        filenames = []
+        attach_dir = ''
+        v_to = input("To: "+self.message['From'])
+        if (v_to==''):
+            v_to = self.message['From']
+        v_subject = input("Subject: Re: "+self.message['Subject'])
+        if (v_subject==''):
+            v_subject = self.message['Subject']
+        v_cc = input("Cc: "+self.message['Cc'])
+        if (v_cc==''):
+            v_cc = self.message['Cc']
+        v_msg = input('Body (Type "END" to commit): ')
+        if v_msg=='END':
+            v_msg = ''
+        else:
+            line = ''
+            while line!='END':
+                v_msg = v_msg + "\n"+ line
+                line = input()
+        f = open(self.program_folder+'config/signature')
+        v_msg+="\n\n"+f.read()
+        f.close()
+        v_msg = v_msg+"\n\n"+"On "+self.message['Date']+' '+self.message['From']+' wrote: \n'+self.message['Body'].replace("\n", "\n> ")
+        v_attach = input('Attachments (Filenames, divided with ";"): ')
+        if len(v_attach)>0:
+            attach_dir = self.program_folder+'tmp/attach'
+            os.makedirs(attach_dir)
+            attachments = v_attach.split(";")
+            for i in range(len(attachments)):
+                shutil.copy(attachments[i], attach_dir)
+            filenames = os.listdir(attach_dir)
+        self.mailer.sendMessage(v_to, v_subject, v_msg.replace('\n', '<br />'), filenames, attach_dir, v_cc)
+
+    def createMessage(self):
+        filenames = []
+        attach_dir = ''
+        v_to = input("To: ")
+        v_subject = input("Subject: ")
+        v_cc = input("Cc: ")
+        v_msg = input('Body (Type "END" to commit): ')
+        if v_msg=='END':
+            v_msg = ''
+        else:
+            line = ''
+            while line!='END':
+                v_msg = v_msg + "\n" + line
+                line = input()
+        f = open(self.program_folder+'config/signature')
+        v_msg+="\n\n"+f.read()
+        f.close()
+        v_attach = input('Attachments (Filenames, divided with ";"): ')
+        if len(v_attach)>0:
+            attach_dir = self.program_folder+'tmp/attach'
+            os.makedirs(attach_dir)
+            attachments = v_attach.split(";")
+            for i in range(len(attachments)):
+                shutil.copy(attachments[i], attach_dir)
+            filenames = os.listdir(attach_dir)
+        print(v_msg)
+        self.mailer.sendMessage(v_to, v_subject, v_msg.replace('\n', '<br />'), filenames, attach_dir, v_cc)
+        print("OK")
+
+    def deleteMessage(self, num):
+        self.mailer.deleteMessage(self.message_list_count - num + 1)
+        print("OK")
+
     def printMessage(self, num):
         self.selected_message = self.message_list_count - num + 1
+        self.getMessage()
+        self.printBody()
+
+    def getMessage(self):
         if (self.folder=='inbox'):
             self.message = self.mailer.getMessage(self.selected_message)
         elif(self.folder=='archive'):
             self.message = self.message_list[self.selected_message-1]
-        self.printBody()
-
-    def printBody():
         if 'plain' in self.message:
             body = self.message['plain']
         elif 'html' in self.message:
             body = re.sub('<[^>]*>', '', re.sub('<br[^>]*>', '\n', self.message['html']))
         else:
             body = ''
+        self.message['Body'] = body
+
+
+    def printBody():
+        body = self.message['Body']
         body = re.sub("\n[\n\s\t]*\n", "\n", body)
         body = re.sub("^\n", '', body)
         print("From: "+self.message['From'])
@@ -62,8 +149,6 @@ class stormbringer():
         print("Date: "+self.message['Date'])
         print('')
         print(body)
-
-
 
     def printMessageList(self, folder='inbox', limit=0):
         if folder=='inbox':
