@@ -103,7 +103,6 @@ class emailGui(Gtk.Window):
         self.textbuffer.set_text("")
         scrolledwindow.add(self.textview)
 
-
     def createWidgets(self):
         self.grid = Gtk.Grid()
         self.add(self.grid)

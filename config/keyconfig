@@ -1,25 +1,4 @@
-Escape:quit
-Ctrl+q:quit
-F5:checkEmails
-F6:checkArchive
-Ctrl+r:reply
-Ctrl+n:compose
-Ctrl+s:archiveCurrent
-Ctrl+1:printMessageByNum
-Ctrl+2:printMessageByNum
-Ctrl+3:printMessageByNum
-Ctrl+4:printMessageByNum
-Ctrl+5:printMessageByNum
-Ctrl+6:printMessageByNum
-Ctrl+7:printMessageByNum
-Ctrl+8:printMessageByNum
-Ctrl+9:printMessageByNum
-Alt+1:deleteMessageByNum
-Alt+2:deleteMessageByNum
-Alt+3:deleteMessageByNum
-Alt+4:deleteMessageByNum
-Alt+5:deleteMessageByNum
-Alt+6:deleteMessageByNum
-Alt+7:deleteMessageByNum
-Alt+8:deleteMessageByNum
-Alt+9:deleteMessageByNum
+{
+    "quit":113,
+    "refresh":48
+}
