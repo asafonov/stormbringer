@@ -1,8 +1,4 @@
 #!/bin/bash
 TMPNAME=`pwd`
 echo python3 $TMPNAME/stormbringer.py "~"/.config/stormbringer/ > /usr/bin/stormbringer
-echo python3 $TMPNAME/stormbringer_gtk.py "~"/.config/stormbringer/ > /usr/bin/stormbringer_gtk
-echo python3 $TMPNAME/stormbringer_curses.py "~"/.config/stormbringer/ > /usr/bin/stormbringer_curses
 chmod 755 /usr/bin/stormbringer
-chmod 755 /usr/bin/stormbringer_gtk
-chmod 755 /usr/bin/stormbringer_curses
