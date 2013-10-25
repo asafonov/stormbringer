@@ -99,7 +99,6 @@ class smtpConnector:
         M.sendmail(self.from_email, tmp, v_msg)
         M.quit()
         self.saveSentMessage(v_to, v_subject, msg)
-        print(v_msg)
 
     def sendMessageSendmail(self, v_to, v_subject, msg, filenames, attach_dir, v_cc=''):
         self.connect()

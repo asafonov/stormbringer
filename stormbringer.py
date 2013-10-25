@@ -1,7 +1,9 @@
-import sys,  json
+import sys,  json, re, os, shutil
 import lib.asafonov_mailer, lib.asafonov_folders
 
 class stormbringer():
+
+    selected_message = 0
 
     def __init__(self, program_folder=''):
         lib.asafonov_folders.initFolders(program_folder)
@@ -29,21 +31,21 @@ class stormbringer():
                 spam.append(0)
             if len(spam)==2:
                 spam.append('inbox')
-            self.printMessageList(spam[2], spam[1])
+            self.printMessageList(spam[2], int(spam[1]))
         elif cmd_name=='cat':
             if len(spam)==1:
                 spam.append(1)
-            self.printMessage(spam[1])
+            self.printMessage(int(spam[1]))
         elif cmd_name=='new':
             self.createMessage()
         elif cmd_name=='rp':
             if len(spam)==1:
                 spam.append(self.message_list_count - self.selected_message + 1)
-            self.replyMessage(spam[1])
+            self.replyMessage(int(spam[1]))
         elif cmd_name=='rm':
             if len(spam)==1:
                 spam.append(self.message_list_count - self.selected_message + 1)
-            self.deleteMessage(spam[1])
+            self.deleteMessage(int(spam[1]))
         elif cmd_name=='exit':
             return False
         else:
@@ -63,9 +65,12 @@ class stormbringer():
         v_subject = input("Subject: Re: "+self.message['Subject'])
         if (v_subject==''):
             v_subject = self.message['Subject']
-        v_cc = input("Cc: "+self.message['Cc'])
-        if (v_cc==''):
-            v_cc = self.message['Cc']
+        if 'Cc' in self.message:
+            v_cc = input("Cc: "+self.message['Cc'])
+            if (v_cc==''):
+                v_cc = self.message['Cc']
+        else:
+            v_cc = input("Cc: ")           
         v_msg = input('Body (Type "END" to commit): ')
         if v_msg=='END':
             v_msg = ''
@@ -87,6 +92,7 @@ class stormbringer():
                 shutil.copy(attachments[i], attach_dir)
             filenames = os.listdir(attach_dir)
         self.mailer.sendMessage(v_to, v_subject, v_msg.replace('\n', '<br />'), filenames, attach_dir, v_cc)
+        print("OK")
 
     def createMessage(self):
         filenames = []
@@ -113,7 +119,6 @@ class stormbringer():
             for i in range(len(attachments)):
                 shutil.copy(attachments[i], attach_dir)
             filenames = os.listdir(attach_dir)
-        print(v_msg)
         self.mailer.sendMessage(v_to, v_subject, v_msg.replace('\n', '<br />'), filenames, attach_dir, v_cc)
         print("OK")
 
@@ -140,7 +145,7 @@ class stormbringer():
         self.message['Body'] = body
 
 
-    def printBody():
+    def printBody(self):
         body = self.message['Body']
         body = re.sub("\n[\n\s\t]*\n", "\n", body)
         body = re.sub("^\n", '', body)
