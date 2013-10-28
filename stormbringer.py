@@ -17,7 +17,7 @@ class stormbringer():
         f.close()
         listen = True
         while listen:
-            cmd = input('> ')
+            cmd = input('SPEAK, FRIEND > ')
             listen = self.processCommand(cmd)
 
     def processCommand(self, cmd):
@@ -124,6 +124,7 @@ class stormbringer():
 
     def deleteMessage(self, num):
         self.mailer.deleteMessage(self.message_list_count - num + 1)
+        self.message_list_count = self.message_list_count - 1
         print("OK")
 
     def printMessage(self, num):
