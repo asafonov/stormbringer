@@ -46,6 +46,15 @@ class stormbringer():
             if len(spam)==1:
                 spam.append(self.message_list_count - self.selected_message + 1)
             self.deleteMessage(int(spam[1]))
+        elif cmd_name=='mb':
+            if len(spam)==1:
+                self.error("Usage: mb mailbox_name")
+            else:
+                ret = self.mailer.connectMailbox(spam[1])
+                if not ret:
+                    self.error("Unknown mailbox: "+spam[1])
+                else:
+                    print("OK")
         elif cmd_name=='exit':
             return False
         else:
