@@ -5,26 +5,33 @@ class mailer:
     def __init__(self, program_folder=''):
         self.program_folder = program_folder
         f = open(self.program_folder+'config/access')
-        lines = f.read().split('\n')
+        self.mailboxes = json.loads(f.read())
         f.close()
-        self.protocol = lines[9]
-        if self.protocol == 'IMAP':
-            self.transport = lib.asafonov_imap.imapConnector(self.program_folder)
-        else:
-            self.transport = lib.asafonov_pop3.pop3Connector(self.program_folder)
-        self.transport.host = lines[0]
-        self.transport.port = lines[1]
-        self.transport.login = lines[2]
-        self.transport.password = lines[3]
-        self.transport.is_ssl = int(lines[4])
-        self.sender = lib.asafonov_smtp.smtpConnector(self.program_folder)
-        self.sender.host = lines[5]
-        self.sender.port = lines[6]
-        self.sender.login = lines[2]
-        self.sender.password = lines[3]
-        self.sender.is_ssl = int(lines[7])
-        self.sender.from_email=lines[8]
+        self.connectMailbox(list(self.mailboxes.keys())[0])
         self.initFilters()
+
+    def connectMailbox(self, mailbox):
+        if mailbox in self.mailboxes:
+            if self.mailboxes[mailbox]['protocol'] == 'IMAP':
+                self.transport = lib.asafonov_imap.imapConnector(self.program_folder)
+            else:
+                self.transport = lib.asafonov_pop3.pop3Connector(self.program_folder)
+            self.transport.host = self.mailboxes[mailbox]['in_host']
+            self.transport.port = self.mailboxes[mailbox]['in_port']
+            self.transport.login = self.mailboxes[mailbox]['login']
+            self.transport.password = self.mailboxes[mailbox]['password']
+            self.transport.is_ssl = int(self.mailboxes[mailbox]['in_is_ssl'])
+            self.sender = lib.asafonov_smtp.smtpConnector(self.program_folder)
+            self.sender.host = self.mailboxes[mailbox]['out_host']
+            self.sender.port = self.mailboxes[mailbox]['out_port']
+            self.sender.login = self.mailboxes[mailbox]['login']
+            self.sender.password = self.mailboxes[mailbox]['password']
+            self.sender.is_ssl = int(self.mailboxes[mailbox]['out_is_ssl'])
+            self.sender.from_email=self.mailboxes[mailbox]['from']
+            return True
+        else:
+            return False
+
 
     def initFilters(self):
         f = open(self.program_folder+'config/filters')

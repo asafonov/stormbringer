@@ -1,9 +1,14 @@
-imap.gmail.com
-993
-me@asafonov.org
-
-1
-smtp.gmail.com
-465
-me@asafonov.org
-IMAP
+{
+    "asafonov.org": {
+        "in_host":"pop.asafonov.org",
+        "in_port":995,
+        "in_is_ssl":1,
+        "out_host":"smtp.asafonov.org",
+        "out_port":465,
+        "out_is_ssl":1,
+        "from":"me@asafonov.org",
+        "login":"me@asafonov.org",
+        "password":"",
+        "protocol":"POP3"
+    }
+}
