@@ -92,6 +92,8 @@ class smtpConnector:
         else:
             M = smtplib.SMTP(self.host, self.port)
         v_msg = self.prepareMessage(v_to, v_subject, msg, filenames, attach_dir, v_cc)
+        if self.port==587:
+            M.starttls()
         M.login(self.login, self.password)
         tmp = re.findall('[A-Za-z0-9_\.\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}', v_to)
         if v_cc!='':
