@@ -77,12 +77,19 @@ class smtpConnector:
         sent_time = datetime.now().strftime('%Y%m%d%H%M%S')
         letter_file += '/'+sent_time
         message = {}
-        message['From'] = self.from_email
-        message['To'] = v_to
-        message['Subject'] = v_subject
+        if sys.version_info[0]==3:
+            message['From'] = self.from_email
+            message['To'] = v_to
+            message['Subject'] = v_subject
+            message['html'] = msg
+        else:
+            message['From'] = self.from_email.decode('utf-8')
+            message['To'] = v_to.decode('utf-8')
+            message['Subject'] = v_subject.decode('utf-8')
+            message['html'] = msg.decode('utf-8')
+            
         message['Message-Id'] = sent_time
         message['Date'] = sent_time
-        message['html'] = msg
         lib.asafonov_email_parser.saveMessageToCache(message, letter_file)
 
     def sendMessage(self, v_to, v_subject, msg, filenames, attach_dir, v_cc=''):
@@ -94,7 +101,7 @@ class smtpConnector:
         v_msg = self.prepareMessage(v_to, v_subject, msg, filenames, attach_dir, v_cc)
         if self.port==587:
             M.starttls()
-        M.login(self.login, self.password)
+        M.login(str(self.login), str(self.password))
         tmp = re.findall('[A-Za-z0-9_\.\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}', v_to)
         if v_cc!='':
             tmp += re.findall('[A-Za-z0-9_\.\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}', v_cc)
