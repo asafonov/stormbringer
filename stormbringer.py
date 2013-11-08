@@ -1,6 +1,10 @@
 import sys,  json, re, os, shutil
 import lib.asafonov_mailer, lib.asafonov_folders
 
+# Fix Python 2.x.
+try: input = raw_input
+except NameError: pass
+
 class stormbringer():
 
     selected_message = 0
