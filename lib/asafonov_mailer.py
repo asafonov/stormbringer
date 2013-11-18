@@ -7,7 +7,10 @@ class mailer:
         f = open(self.program_folder+'config/access')
         self.mailboxes = json.loads(f.read())
         f.close()
-        self.connectMailbox(list(self.mailboxes.keys())[0])
+        if 'default' in self.mailboxes:
+            self.connectMailbox('default')
+        else:
+            self.connectMailbox(list(self.mailboxes.keys())[0])
         self.initFilters()
 
     def connectMailbox(self, mailbox):
