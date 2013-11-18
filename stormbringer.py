@@ -25,7 +25,7 @@ class stormbringer():
             listen = self.processCommand(cmd)
 
     def processCommand(self, cmd):
-        spam = cmd.split(' ')
+        spam = cmd.split()
         if spam[0] in self.commands.keys():
             cmd_name = self.commands[spam[0]]
         else:
