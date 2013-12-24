@@ -61,6 +61,10 @@ class stormbringer():
                     print("OK")
         elif cmd_name=='exit':
             return False
+        elif cmd_name.lower()=='mellon':
+            print()
+            print("OMG, you're nerd too! Thanks mate, I knew I was right to add this command here. Now you may read your emails with `ls`")
+            print()
         else:
             self.error("Unknown command: "+spam[0])
         return True
